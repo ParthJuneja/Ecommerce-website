@@ -4,10 +4,14 @@ import jwt from "jsonwebtoken";
 
 const UserSchema = new mongoose.Schema(
   {
+    fullname: { type: String, required: true, trim: true },
     username: { type: String, required: true, unique: true, lowercase: true },
     email: { type: String, required: true, unique: true, lowercase: true },
     password: { type: String, required: true, minlength: 6 },
     id: String,
+    avatar: { type: String, required: true ,default: "" },
+    coverPicture: { type: String, default: "" },
+    refreshToken: { type: String, default: "" },
   },
   { timestamps: true }
 );
