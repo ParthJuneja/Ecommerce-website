@@ -90,7 +90,7 @@ const loginUser = asyncHandler(async (req, res) => {
   // get user details from frontend
   const { username, email, password } = req.body;
   // username or email
-  if (!username || !email) {
+  if (!username && !email) {
     throw new ApiError(400, "Please provide username or email");
   }
   // Oauth - google, facebook, github
