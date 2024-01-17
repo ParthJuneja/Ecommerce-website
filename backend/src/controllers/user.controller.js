@@ -17,7 +17,7 @@ const registerUser = asyncHandler(async (req, res) => {
   }
 
   // check if user exists
-  const existedUser = User.findOne({
+  const existedUser = await User.findOne({
     $or: [{ username }, { email }],
   });
   if (existedUser) {
@@ -25,8 +25,8 @@ const registerUser = asyncHandler(async (req, res) => {
   }
 
   // check images
-  const avatarLocalPath = req.file?.avatar[0]?.path;
-  const coverPictureLocalPath = req.file?.coverPicture[0]?.path;
+  const avatarLocalPath = req.files?.avatar[0]?.path;
+  // const coverPictureLocalPath = req.files?.coverPicture[0]?.path;
 
   if (!avatarLocalPath) {
     throw new ApiError(400, "Please upload avatar");
@@ -34,7 +34,7 @@ const registerUser = asyncHandler(async (req, res) => {
 
   // upload image to s3 bucket or cloudinary
   const avatarUrl = await uploadOnCloudinary(avatarLocalPath);
-  const coverPictureUrl = await uploadOnCloudinary(coverPictureLocalPath);
+  // const coverPictureUrl = await uploadOnCloudinary(coverPictureLocalPath);
 
   if (!avatarUrl) {
     throw new ApiError(500, "Error while uploading avatar");
@@ -43,11 +43,11 @@ const registerUser = asyncHandler(async (req, res) => {
   // create user object - create entry in db
   const user = await User.create({
     fullname,
-    username: username.toLowerCae(),
+    username: username.toLowerCase(),
     email,
     password,
     avatar: avatarUrl.url,
-    coverPicture: coverPictureUrl?.url || "",
+    // coverPicture: coverPictureUrl?.url || "",
   });
 
   // check user creation
@@ -57,10 +57,11 @@ const registerUser = asyncHandler(async (req, res) => {
   if (!checkUser) {
     throw new ApiError(500, "Something went wrong while creating user");
   }
+  
   // return response
   return res
     .status(201)
-    .json(new ApiResponse(res, 201, checkUser, "User created successfully"));
+    .json(new ApiResponse(201, checkUser, "User created successfully"));
 });
 
 export { registerUser };
