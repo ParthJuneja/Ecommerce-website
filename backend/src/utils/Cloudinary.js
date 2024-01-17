@@ -20,6 +20,7 @@ const uploadOnCloudinary = async (filePath) => {
     });
     //uploaded successfully
     console.log("Uploaded successfully", response.url);
+    // fs.unlinkSync(filePath);
     
     if (uploadedImage) {
       // remove file from server
@@ -29,6 +30,7 @@ const uploadOnCloudinary = async (filePath) => {
     return response;
   }
   catch (error){
+    if (!filePath) return;
     fs.unlinkSync(filePath);
     //remove local file if upload failed
     console.log(error);
