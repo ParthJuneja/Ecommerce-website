@@ -91,8 +91,8 @@ const loginUser = asyncHandler(async (req, res) => {
   // get user details from frontend
   const { username, email, password } = req.body;
   // username or email
-  if (!username && !email) {
-    throw new ApiError(400, "Please provide username or email");
+  if (!(username || email)) {
+    throw new ApiError(400, "ERROR: Please provide username or email");
   }
   // Oauth - google, facebook, github
   // validate user details from already existing db
@@ -289,6 +289,8 @@ const updateCoverPicture = asyncHandler(async (req, res) => {
     .status(200)
     .json(new ApiResponse(200, user, "Cover picture updated"));
 });
+
+// TODO: old image delete from cloudinary
 
 export {
   generateJWTTokens,
