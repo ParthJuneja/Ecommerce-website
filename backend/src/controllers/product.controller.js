@@ -3,6 +3,7 @@ import { Product } from "../models/product.model.js";
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 
+//TODO: bugs at createProduct due to objectid and owner validation 
 const createProduct = asyncHandler(async (req, res) => {
   try {
     const { name, description, price, productImage, stock, category, owner } =
@@ -17,6 +18,8 @@ const createProduct = asyncHandler(async (req, res) => {
       category,
       owner,
     });
+
+    console.log("product", product);
 
     const createdProduct = await product.save();
 
@@ -51,6 +54,10 @@ const getAllProducts = asyncHandler(async (req, res) => {
     const products = await Product.find({});
     if (!products) {
       throw new ApiError(404, "No products found");
+    }
+    // check if products found are greater than 0
+    if (products.length <= 0) {
+      throw new ApiError(404, "0 products found");
     }
     return res
       .status(200)
