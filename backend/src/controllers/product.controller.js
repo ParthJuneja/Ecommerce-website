@@ -1,13 +1,23 @@
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { Product } from "../models/product.model.js";
+import { User } from "../models/user.model.js";
+import { Category } from "../models/category.model.js";
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 
-//TODO: bugs at createProduct due to objectid and owner validation 
 const createProduct = asyncHandler(async (req, res) => {
   try {
-    const { name, description, price, productImage, stock, category, owner } =
+    const { name, description, price, productImage, stock, category } =
       req.body;
+    const owner = req.user?._id;
+    if (!owner) {
+      throw new ApiError(401, "User not signed in");
+    }
+    const categoryVal = Category.findOne({ name: category });
+    if (!categoryVal) {
+      throw new ApiError(404, "Category not found");
+    }
+    //TODO: check if owner exists and is signed in.
 
     const product = new Product({
       name,
@@ -15,7 +25,7 @@ const createProduct = asyncHandler(async (req, res) => {
       price,
       productImage,
       stock,
-      category,
+      categoryVal,
       owner,
     });
 
